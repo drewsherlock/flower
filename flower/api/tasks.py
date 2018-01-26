@@ -482,13 +482,16 @@ List tasks
         state = self.get_argument('state', None)
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
-        succinct = self.get_argument('succinct', None)
+        succinct = self.get_argument('succinct', False)
 
         limit = limit and int(limit)
         worker = worker if worker != 'All' else None
         type = type if type != 'All' else None
         state = state if state != 'All' else None
         succinct = True if succinct == 'true' else False
+
+        logger.debug("List tasks: succinct=%s",
+                     succinct)
 
         result = []
         for task_id, task in tasks.iter_tasks(
