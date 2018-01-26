@@ -482,11 +482,13 @@ List tasks
         state = self.get_argument('state', None)
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
-
+        succinct = self.get_argument('succinct', None)
+        
         limit = limit and int(limit)
         worker = worker if worker != 'All' else None
         type = type if type != 'All' else None
         state = state if state != 'All' else None
+        succinct = True if succinct='true' else False 
 
         result = []
         for task_id, task in tasks.iter_tasks(
@@ -496,7 +498,10 @@ List tasks
                 received_end=received_end):
             task = tasks.as_dict(task)
             task.pop('worker', None)
-            result.append((task_id, task))
+            if succinct:
+                result.append(task_id)
+            else:
+                result.append((task_id, task))
         self.write(dict(result))
 
 
