@@ -499,16 +499,16 @@ List tasks
             if succinct:
                 result.append(task_id)
             else:
-                task.pop('worker', None)
                 task = tasks.as_dict(task)
+                task.pop('worker', None)
                 result.append((task_id, task))
-        
+
         if succinct:
             self.write(result)
         else:
             self.write(dict(result))
 
-            
+
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
     def get(self):
