@@ -488,7 +488,7 @@ List tasks
         worker = worker if worker != 'All' else None
         type = type if type != 'All' else None
         state = state if state != 'All' else None
-        succinct = True if succinct='true' else False 
+        succinct = True if succinct == 'true' else False 
 
         result = []
         for task_id, task in tasks.iter_tasks(
