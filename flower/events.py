@@ -79,13 +79,11 @@ class Events(threading.Thread):
             if state:
                 self.state = state['events']
             state.close()
-            
+            self.timer_save_state = PeriodicCallback(self.save_state,
+                                                     self.save_state_interval)
+
         if not self.state:
             self.state = EventsState(**kwargs)
-
-        if self.persistent:
-            self.timer_shelve_flush = PeriodicCallback(self.save_state,
-                                                       self.save_state_interval)
 
         self.timer = PeriodicCallback(self.on_enable_events,
                                       self.events_enable_interval)
@@ -95,11 +93,14 @@ class Events(threading.Thread):
         # Celery versions prior to 2 don't support enable_events
         if self.enable_events and celery.VERSION[0] > 2:
             self.timer.start()
-
+        
+        if self.persistent:
+            self.timer_save_state.start()
+        
     def stop(self):
         if self.persistent:
             save_state()
-            
+
     def run(self):
         try_interval = 1
         while True:
