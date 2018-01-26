@@ -500,18 +500,14 @@ List tasks
                 received_start=received_start,
                 received_end=received_end):
             if succinct:
-                result.append(task_id)
+                result.append(task_id, {})
             else:
                 task = tasks.as_dict(task)
                 task.pop('worker', None)
                 result.append((task_id, task))
 
-        if succinct:
-            self.write(result)
-        else:
-            self.write(dict(result))
-
-
+        self.write(dict(result)
+        
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
     def get(self):
