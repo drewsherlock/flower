@@ -53,6 +53,7 @@ class EventsState(State):
 
 class Events(threading.Thread):
     events_enable_interval = 5000
+    save_state_interval = 10000
 
     def __init__(self, capp, db=None, persistent=False,
                  enable_events=True, io_loop=None, **kwargs):
@@ -78,13 +79,17 @@ class Events(threading.Thread):
             if state:
                 self.state = state['events']
             state.close()
-
+            
         if not self.state:
             self.state = EventsState(**kwargs)
 
+        if self.persistent:
+            self.timer_shelve_flush = PeriodicCallback(self.save_state,
+                                                       self.save_state_interval)
+
         self.timer = PeriodicCallback(self.on_enable_events,
                                       self.events_enable_interval)
-
+        
     def start(self):
         threading.Thread.start(self)
         # Celery versions prior to 2 don't support enable_events
@@ -93,11 +98,8 @@ class Events(threading.Thread):
 
     def stop(self):
         if self.persistent:
-            logger.debug("Saving state to '%s'...", self.db)
-            state = shelve.open(self.db)
-            state['events'] = self.state
-            state.close()
-
+            save_state()
+            
     def run(self):
         try_interval = 1
         while True:
@@ -131,6 +133,13 @@ class Events(threading.Thread):
             self.capp.control.enable_events()
         except Exception as e:
             logger.debug("Failed to enable events: '%s'", e)
+
+    def save_state(self):
+        # Periodically flush events to shelve if in persistent mode
+        logger.debug("Saving state to '%s'...", self.db)
+        state = shelve.open(self.db)
+        state['events'] = self.state
+        state.close()
 
     def on_event(self, event):
         # Call EventsState.event in ioloop thread to avoid synchronization
