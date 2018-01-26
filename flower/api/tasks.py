@@ -506,7 +506,7 @@ List tasks
                 task.pop('worker', None)
                 result.append((task_id, task))
 
-        self.write(dict(result)
+        self.write(dict(result))
         
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
