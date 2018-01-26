@@ -483,12 +483,12 @@ List tasks
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
         succinct = self.get_argument('succinct', None)
-        
+
         limit = limit and int(limit)
         worker = worker if worker != 'All' else None
         type = type if type != 'All' else None
         state = state if state != 'All' else None
-        succinct = True if succinct == 'true' else False 
+        succinct = True if succinct == 'true' else False
 
         result = []
         for task_id, task in tasks.iter_tasks(
@@ -500,10 +500,10 @@ List tasks
             task.pop('worker', None)
             if succinct:
                 result.append(task_id)
+                self.write(result)
             else:
                 result.append((task_id, task))
-        self.write(dict(result))
-
+                self.write(dict(result))
 
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
