@@ -496,12 +496,12 @@ List tasks
                 worker=worker, state=state,
                 received_start=received_start,
                 received_end=received_end):
-            task = tasks.as_dict(task)
-            task.pop('worker', None)
             if succinct:
                 result.append(task_id)
                 self.write(result)
             else:
+                task.pop('worker', None)
+                task = tasks.as_dict(task)
                 result.append((task_id, task))
                 self.write(dict(result))
 
