@@ -500,7 +500,7 @@ List tasks
                 received_start=received_start,
                 received_end=received_end):
             if succinct:
-                result.append((task_id, {}))
+                result.append((task_id, {'state':task.state}))
             else:
                 task = tasks.as_dict(task)
                 task.pop('worker', None)
