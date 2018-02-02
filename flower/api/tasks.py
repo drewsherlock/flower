@@ -483,6 +483,7 @@ List tasks
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
         succinct = self.get_argument('succinct', False)
+        count_only = self.get_argument('count_only', False)
 
         limit = limit and int(limit)
         worker = worker if worker != 'All' else None
@@ -493,20 +494,28 @@ List tasks
         logger.debug("List tasks: succinct=%s",
                      succinct)
 
-        result = []
-        for task_id, task in tasks.iter_tasks(
+        iter_tasks = tasks.iter_tasks(
                 app.events, limit=limit, type=type,
                 worker=worker, state=state,
                 received_start=received_start,
-                received_end=received_end):
-            if succinct:
-                result.append((task_id, {'state':task.state}))
-            else:
+                received_end=received_end)
+        
+        if succinct:
+            task_data = {}
+            for task_id, task in iter_tasks:
+                task_data[task_id] = {'state':task.state}
+            result = {'count': len(task_data.keys())}
+            if not count_only:
+                result['parts'] = task_data
+        else:
+            result = []
+            for task_id, task in iter_tasks:
                 task = tasks.as_dict(task)
                 task.pop('worker', None)
                 result.append((task_id, task))
-
-        self.write(dict(result))
+            result = dict(result)
+        
+        self.write(result)
         
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
