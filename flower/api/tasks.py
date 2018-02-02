@@ -506,7 +506,7 @@ List tasks
                 task_data[task_id] = {'state':task.state}
             result = {'count': len(task_data.keys())}
             if not count_only:
-                result['parts'] = task_data
+                result['tasks'] = task_data
         else:
             result = []
             for task_id, task in iter_tasks:
