@@ -592,7 +592,7 @@ Summarize task counts by task and state
             if timestamp < task.timestamp:
                 result[task.type][task.state] += 1
         
-        self.write(result)
+        self.write(dict(result))
         
 class ListTaskTypes(BaseTaskHandler):
     @web.authenticated
