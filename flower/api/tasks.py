@@ -2,6 +2,7 @@ from __future__ import absolute_import
 
 import json
 import logging
+import collections
 
 from datetime import datetime
 from threading import Thread
@@ -517,6 +518,79 @@ List tasks
                     task.pop('worker', None)
                     result.append((task_id, task))
             result = dict(result)
+        
+        self.write(result)
+
+class SummarizeTasks(BaseTaskHandler):
+    @web.authenticated
+    def get(self):
+        """
+Summarize task counts by task and state
+
+**Example request**:
+
+.. sourcecode:: http
+
+  GET /api/tasks/summarize HTTP/1.1
+  Host: localhost:5555
+  User-Agent: HTTPie/0.8.0
+
+**Example response**:
+
+.. sourcecode:: http
+
+  HTTP/1.1 200 OK
+  Content-Length: 1109
+  Content-Type: application/json; charset=UTF-8
+  Etag: "b2478118015c8b825f7b88ce6b660e5449746c37"
+  Server: TornadoServer/3.1.1
+
+  {
+        "tasks.add": {"PENDING":1000,
+                      "SUCCESS":2000,
+                      "FAILURE":2},
+        "tasks.subtract": {"PENDING":500,
+                      "SUCCESS":1000,
+                      "FAILURE":1}
+  }
+
+:query workername: filter task by workername
+:query taskname: filter tasks by taskname
+:query state: filter tasks by state
+:query received_start: filter tasks by received date (must be greater than) format %Y-%m-%d %H:%M
+:query received_end: filter tasks by received date (must be less than) format %Y-%m-%d %H:%M
+:query lastquery: filter tasks later than timestamp
+:reqheader Authorization: optional OAuth token to authenticate
+:statuscode 200: no error
+:statuscode 401: unauthorized request
+        """
+
+        app = self.application
+        worker = self.get_argument('workername', None)
+        type = self.get_argument('taskname', None)
+        state = self.get_argument('state', None)
+        received_start = self.get_argument('received_start', None)
+        received_end = self.get_argument('received_end', None)
+        timestamp = self.get_argument('lastquery', 0, type=float)
+
+        worker = worker if worker != 'All' else None
+        type = type if type != 'All' else None
+        state = state if state != 'All' else None
+        succinct = True if succinct == 'true' else False
+
+        logger.debug("List tasks: succinct=%s",
+                     succinct)
+
+        iter_tasks = tasks.iter_tasks(
+                app.events, type=type,
+                worker=worker, state=state,
+                received_start=received_start,
+                received_end=received_end)
+        
+        result = collections.defaultdict(collections.Counter)
+        for task_id, task in iter_tasks:
+            if timestamp < task.timestamp:
+                result[task.type][task.state] += 1
         
         self.write(result)
         
