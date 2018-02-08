@@ -588,7 +588,7 @@ Summarize task counts by task and state
         result = collections.defaultdict(collections.Counter)
         for task_id, task in iter_tasks:
             if timestamp < task.timestamp:
-                result[task.type][task.state] += 1
+                result[task.name][task.state] += 1
         
         self.write(dict(result))
         
