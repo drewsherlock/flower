@@ -362,7 +362,7 @@ Abort a running task
         self.write(dict(message="Aborted '%s'" % taskid))
 
 
-class GetQueueLengths(BaseTaskHandler):
+class GetQueueLengths():
     @web.authenticated
     @gen.coroutine
     def get(self):
@@ -484,6 +484,7 @@ List tasks
         received_end = self.get_argument('received_end', None)
         succinct = self.get_argument('succinct', False)
         count_only = self.get_argument('count_only', False)
+        timestamp = self.get_argument('lastquery', 0, type=float)
 
         limit = limit and int(limit)
         worker = worker if worker != 'All' else None
@@ -503,16 +504,18 @@ List tasks
         if succinct:
             task_data = {}
             for task_id, task in iter_tasks:
-                task_data[task_id] = {'state':task.state}
+                if timestamp < task.timestamp:
+                    task_data[task_id] = {'state':task.state}
             result = {'count': len(task_data.keys())}
             if not count_only:
                 result['tasks'] = task_data
         else:
             result = []
             for task_id, task in iter_tasks:
-                task = tasks.as_dict(task)
-                task.pop('worker', None)
-                result.append((task_id, task))
+                if timestamp < task.timestamp:
+                    task = tasks.as_dict(task)
+                    task.pop('worker', None)
+                    result.append((task_id, task))
             result = dict(result)
         
         self.write(result)
