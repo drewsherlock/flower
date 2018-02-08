@@ -576,10 +576,8 @@ Summarize task counts by task and state
         worker = worker if worker != 'All' else None
         type = type if type != 'All' else None
         state = state if state != 'All' else None
-        succinct = True if succinct == 'true' else False
-
-        logger.debug("List tasks: succinct=%s",
-                     succinct)
+        
+        logger.debug("Summarize tasks")
 
         iter_tasks = tasks.iter_tasks(
                 app.events, type=type,
