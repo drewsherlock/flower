@@ -531,7 +531,7 @@ Summarize task counts by task and state
 
 .. sourcecode:: http
 
-  GET /api/tasks/summarize HTTP/1.1
+  GET /api/tasks/summary HTTP/1.1
   Host: localhost:5555
   User-Agent: HTTPie/0.8.0
 
