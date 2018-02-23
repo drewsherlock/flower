@@ -506,7 +506,9 @@ List tasks
             task_data = {}
             for task_id, task in iter_tasks:
                 if timestamp < task.timestamp:
-                    task_data[task_id] = {'state':task.state}
+                    task_data[task_id] = {'state':task.state,
+                                          'action':task.type,
+                                         }
             result = {'count': len(task_data.keys())}
             if not count_only:
                 result['tasks'] = task_data
