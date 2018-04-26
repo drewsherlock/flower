@@ -54,12 +54,12 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
             continue
 
         if completed_start and task.completed and\
-                task.started < convert(started_start):
+                task.completed < convert(completed_start):
             continue
         if completed_end and task.completed and\
-                task.started > convert(started_end):
+                task.completed > convert(completed_end):
             continue
-            
+
         if not satisfies_search_terms(task, search_terms):
             continue
         yield uuid, task
