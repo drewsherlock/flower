@@ -493,6 +493,9 @@ List tasks
         
         succeeded_start = self.get_argument('succeeded_start', None)
         succeeded_end = self.get_argument('succeeded_end', None)
+
+        failed_start = self.get_argument('failed_start', None)
+        failed_end = self.get_argument('failed_end', None)
         
         succinct = self.get_argument('succinct', False)
         count_only = self.get_argument('count_only', False)
@@ -517,7 +520,9 @@ List tasks
                 started_start=started_start,
                 started_end=started_end,
                 succeeded_start=succeeded_start,
-                succeeded_end=succeeded_end,)
+                succeeded_end=succeeded_end,
+                failed_start=failed_start,
+                failed_end=failed_end,)
         
         if succinct:
             task_data = {}

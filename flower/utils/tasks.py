@@ -14,6 +14,7 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
                received_start=None, received_end=None,
                started_start=None, started_end=None,
                succeeded_start=None, succeeded_end=None,
+               failed_start=None, failed_end=None,
                search=None):
     i = 0
     tasks = events.state.tasks_by_timestamp()
@@ -58,6 +59,13 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
             continue
         if succeeded_end and task.succeeded and\
                 task.succeeded > convert(succeeded_end):
+            continue
+
+        if failed_start and task.failed and\
+                task.failed < convert(failed_start):
+            continue
+        if failed_end and task.failed and\
+                task.failed > convert(failed_end):
             continue
 
         if not satisfies_search_terms(task, search_terms):
