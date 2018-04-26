@@ -526,7 +526,7 @@ List tasks
                 failed_end=failed_end,)
         
         time_fields = ['sent', 'received', 'started', 'succeeded', 'failed']
-        convert = lambda x: datetime.datetime.fromtimestamp(x).strftime('%Y-%m-%d %H:%M:%S')
+        convert = lambda x: datetime.fromtimestamp(x).strftime('%Y-%m-%d %H:%M:%S')
         apply_convert_to_time_fields = lambda k,v: convert(v) if k in time_fields else v
         
         if succinct:
