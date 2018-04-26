@@ -531,8 +531,11 @@ List tasks
                     task_data[task_id] = {'state':task.state,
                                           'action':task.name,
                                           'timestamp':task.timestamp,
-                                          'started':task.timestamp,
                                           'sent':task.sent,
+                                          'received':task.received,
+                                          'started':task.started,
+                                          'succeeded':task.succeeded,
+                                          'failed':task.failed,
                                           'exception':task.exception
                                          }
             result = {'count': len(task_data.keys())}
