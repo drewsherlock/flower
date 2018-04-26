@@ -33,38 +33,38 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
         if state and task.state != state:
             continue
 
-        if sent_start and task.sent and\
+        if sent_start and not task.sent and\
                 task.sent < convert(sent_start):
             continue
-        if sent_end and task.sent and\
+        if sent_end and not task.sent and\
                 task.sent > convert(sent_end):
             continue
         
-        if received_start and task.received and\
+        if received_start and not task.received and\
                 task.received < convert(received_start):
             continue
-        if received_end and task.received and\
+        if received_end and not task.received and\
                 task.received > convert(received_end):
             continue
 
-        if started_start and task.started and\
+        if started_start and not task.started and\
                 task.started < convert(started_start):
             continue
-        if started_end and task.started and\
+        if started_end and not task.started and\
                 task.started > convert(started_end):
             continue
 
-        if succeeded_start and task.succeeded and\
+        if succeeded_start and not task.succeeded and\
                 task.succeeded < convert(succeeded_start):
             continue
-        if succeeded_end and task.succeeded and\
+        if succeeded_end and not task.succeeded and\
                 task.succeeded > convert(succeeded_end):
             continue
 
-        if failed_start and task.failed and\
+        if failed_start and not task.failed and\
                 task.failed < convert(failed_start):
             continue
-        if failed_end and task.failed and\
+        if failed_end and not task.failed and\
                 task.failed > convert(failed_end):
             continue
 
