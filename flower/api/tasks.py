@@ -541,7 +541,6 @@ List tasks
                                           'started':convert(task.started),
                                           'succeeded':convert(task.succeeded),
                                           'failed':convert(task.failed),
-                                          'exception':task.exception,
                                          }
             result = {'count': len(task_data.keys())}
             if not count_only:
