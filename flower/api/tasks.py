@@ -510,6 +510,7 @@ List tasks
         logger.debug("List tasks: succinct=%s",
                      succinct)
 
+        
         iter_tasks = tasks.iter_tasks(
                 app.events, limit=limit, type=type,
                 worker=worker, state=state,
@@ -524,6 +525,10 @@ List tasks
                 failed_start=failed_start,
                 failed_end=failed_end,)
         
+        time_fields = ['sent', 'received', 'started', 'succeeded', 'failed']
+        convert = lambda x: x.strftime('%Y-%m-%d %H:%M:%S')
+        apply_convert_to_time_fields = lambda k,v: convert(v) if k in time_fields else v
+        
         if succinct:
             task_data = {}
             for task_id, task in iter_tasks:
@@ -531,12 +536,12 @@ List tasks
                     task_data[task_id] = {'state':task.state,
                                           'action':task.name,
                                           'timestamp':task.timestamp,
-                                          'sent':task.sent,
-                                          'received':task.received,
-                                          'started':task.started,
-                                          'succeeded':task.succeeded,
-                                          'failed':task.failed,
-                                          'exception':task.exception
+                                          'sent':convert(task.sent),
+                                          'received':convert(task.received),
+                                          'started':convert(task.started),
+                                          'succeeded':convert(task.succeeded),
+                                          'failed':convert(task.failed),
+                                          'exception':task.exception,
                                          }
             result = {'count': len(task_data.keys())}
             if not count_only:
@@ -547,7 +552,8 @@ List tasks
                 if timestamp < task.timestamp:
                     task = tasks.as_dict(task)
                     task.pop('worker', None)
-                    result.append((task_id, task))
+                    task_conv = {k:apply_convert_to_time_fields(k,v) for k,v in task.items()}
+                    result.append((task_id, task_conv))
             result = dict(result)
         
         self.write(result)

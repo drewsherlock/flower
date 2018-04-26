@@ -21,7 +21,7 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
     if sort_by is not None:
         tasks = sort_tasks(tasks, sort_by)
     convert = lambda x: time.mktime(
-        datetime.datetime.strptime(x, '%Y-%m-%d %H:%M').timetuple()
+        datetime.datetime.strptime(x, '%Y-%m-%d %H:%M:%S').timetuple()
     )
     search_terms = parse_search_terms(search or {})
 
@@ -100,7 +100,7 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
 
         if not satisfies_search_terms(task, search_terms):
             continue
-            
+
         yield uuid, task
         i += 1
         if i == limit:
