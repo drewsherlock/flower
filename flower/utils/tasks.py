@@ -33,43 +33,74 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
         if state and task.state != state:
             continue
 
-        if sent_start and not task.sent and\
-                task.sent < convert(sent_start):
-            continue
-        if sent_end and not task.sent and\
-                task.sent > convert(sent_end):
-            continue
-        
-        if received_start and not task.received and\
-                task.received < convert(received_start):
-            continue
-        if received_end and not task.received and\
-                task.received > convert(received_end):
-            continue
+        should_yield = True
 
-        if started_start and not task.started and\
-                task.started < convert(started_start):
-            continue
-        if started_end and not task.started and\
-                task.started > convert(started_end):
-            continue
+        if sent_start:
+            if not task.sent:
+                should_yield = False
+            elif task.sent < convert(sent_start):
+                should_yield = False
 
-        if succeeded_start and not task.succeeded and\
-                task.succeeded < convert(succeeded_start):
-            continue
-        if succeeded_end and not task.succeeded and\
-                task.succeeded > convert(succeeded_end):
-            continue
+        if sent_end:
+            if not task.sent:
+                should_yield = False
+            elif task.sent > convert(sent_end):
+                should_yield = False
 
-        if failed_start and not task.failed and\
-                task.failed < convert(failed_start):
-            continue
-        if failed_end and not task.failed and\
-                task.failed > convert(failed_end):
+        if received_start:
+            if not task.received:
+                should_yield = False
+            elif task.received < convert(received_start):
+                should_yield = False
+
+        if received_end:
+            if not task.received:
+                should_yield = False
+            elif task.received > convert(received_end):
+                should_yield = False
+
+        if started_start:
+            if not task.started:
+                should_yield = False
+            elif task.started < convert(started_start):
+                should_yield = False
+
+        if started_end:
+            if not task.started:
+                should_yield = False
+            elif task.started > convert(started_end):
+                should_yield = False
+
+        if succeeded_start:
+            if not task.succeeded:
+                should_yield = False
+            elif task.succeeded < convert(succeeded_start):
+                should_yield = False
+
+        if succeeded_end:
+            if not task.succeeded:
+                should_yield = False
+            elif task.succeeded > convert(succeeded_end):
+                should_yield = False
+
+        if failed_start:
+            if not task.failed:
+                should_yield = False
+            elif task.failed < convert(failed_start):
+                should_yield = False
+
+        if failed_end:
+            if not task.failed:
+                should_yield = False
+            elif task.failed > convert(failed_end):
+                should_yield = False
+
+        if not should_yield:
             continue
 
         if not satisfies_search_terms(task, search_terms):
             continue
+            
         yield uuid, task
         i += 1
         if i == limit:
