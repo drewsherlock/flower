@@ -488,8 +488,8 @@ List tasks
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
         
-        start_start = self.get_argument('start_start', None)
-        start_end = self.get_argument('start_end', None)
+        started_start = self.get_argument('started_start', None)
+        started_end = self.get_argument('started_end', None)
         
         completed_start = self.get_argument('completed_start', None)
         completed_end = self.get_argument('completed_end', None)
@@ -514,8 +514,8 @@ List tasks
                 sent_end=sent_end,
                 received_start=received_start,
                 received_end=received_end,
-                start_start=start_start,
-                start_end=start_end,
+                started_start=started_start,
+                started_end=started_end,
                 completed_start=completed_start,
                 completed_end=completed_end,)
         
