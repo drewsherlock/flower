@@ -481,8 +481,19 @@ List tasks
         worker = self.get_argument('workername', None)
         type = self.get_argument('taskname', None)
         state = self.get_argument('state', None)
+        
+        sent_start = self.get_argument('sent_start', None)
+        sent_end = self.get_argument('sent_end', None)
+        
         received_start = self.get_argument('received_start', None)
         received_end = self.get_argument('received_end', None)
+        
+        start_start = self.get_argument('start_start', None)
+        start_end = self.get_argument('start_end', None)
+        
+        completed_start = self.get_argument('completed_start', None)
+        completed_end = self.get_argument('completed_end', None)
+        
         succinct = self.get_argument('succinct', False)
         count_only = self.get_argument('count_only', False)
         timestamp = self.get_argument('lastquery', 0, type=float)
@@ -499,8 +510,14 @@ List tasks
         iter_tasks = tasks.iter_tasks(
                 app.events, limit=limit, type=type,
                 worker=worker, state=state,
+                sent_start=sent_start,
+                sent_end=sent_end,
                 received_start=received_start,
-                received_end=received_end)
+                received_end=received_end,
+                start_start=start_start,
+                start_end=start_end,
+                completed_start=completed_start,
+                completed_end=completed_end,)
         
         if succinct:
             task_data = {}
@@ -508,6 +525,10 @@ List tasks
                 if timestamp < task.timestamp:
                     task_data[task_id] = {'state':task.state,
                                           'action':task.name,
+                                          'timestamp':task.timestamp,
+                                          'started':task.timestamp,
+                                          'sent':task.sent,
+                                          'exception':task.exception
                                          }
             result = {'count': len(task_data.keys())}
             if not count_only:

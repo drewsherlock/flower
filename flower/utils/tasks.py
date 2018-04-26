@@ -9,8 +9,12 @@ from celery.events.state import Task
 
 
 def iter_tasks(events, limit=None, type=None, worker=None, state=None,
-               sort_by=None, received_start=None, received_end=None,
-               started_start=None, started_end=None, search=None):
+               sort_by=None,
+               sent_start=None, sent_end=None,
+               received_start=None, received_end=None,
+               started_start=None, started_end=None,
+               completed_start=None, completed_end=None,
+               search=None):
     i = 0
     tasks = events.state.tasks_by_timestamp()
     if sort_by is not None:
@@ -27,18 +31,35 @@ def iter_tasks(events, limit=None, type=None, worker=None, state=None,
             continue
         if state and task.state != state:
             continue
+
+        if sent_start and task.sent and\
+                task.sent < convert(sent_start):
+            continue
+        if sent_end and task.sent and\
+                task.sent > convert(sent_end):
+            continue
+        
         if received_start and task.received and\
                 task.received < convert(received_start):
             continue
         if received_end and task.received and\
                 task.received > convert(received_end):
             continue
+
         if started_start and task.started and\
                 task.started < convert(started_start):
             continue
         if started_end and task.started and\
                 task.started > convert(started_end):
             continue
+
+        if completed_start and task.completed and\
+                task.started < convert(started_start):
+            continue
+        if completed_end and task.completed and\
+                task.started > convert(started_end):
+            continue
+            
         if not satisfies_search_terms(task, search_terms):
             continue
         yield uuid, task
